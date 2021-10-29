@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import { Survey } from 'survey-engine/lib/data_types';
 import Navbar from './components/NavbarComp';
+import SimulationSetup from './components/SimulationSetup';
 import SurveyLoader, { SurveyFileContent } from './components/SurveyLoader';
 import SurveyMenu from './components/SurveyMenu';
 
@@ -7,8 +9,11 @@ interface AppState {
   selectedLanguage?: string;
   languageCodes?: string[];
   surveyKey?: string;
-  screen: 'loader' | 'menu' | 'simulation-setup' | 'simulator';
+  survey?: Survey;
+  screen: Screens;
 }
+
+type Screens = 'loader' | 'menu' | 'simulation-setup' | 'simulator';
 
 const initialState: AppState = {
   screen: 'loader',
@@ -39,7 +44,21 @@ const App: React.FC = () => {
       languageCodes: languageCodes,
       surveyKey: surveyKey,
       screen: 'menu',
+      survey: surveyObject.survey,
     })
+  }
+
+  const navigateTo = (screen: Screens) => {
+    setAppState(prev => {
+      return {
+        ...prev,
+        screen: screen
+      }
+    })
+  }
+
+  const reset = () => {
+    setAppState({ ...initialState })
   }
 
   const pageContent = () => {
@@ -55,7 +74,20 @@ const App: React.FC = () => {
           </div>
         </div>
       case 'menu':
-        return <SurveyMenu />
+        if (!appState.selectedLanguage || !appState.survey) {
+          reset();
+          return null;
+        }
+        return <SurveyMenu
+          selectedLangue={appState.selectedLanguage}
+          survey={appState.survey}
+          onOpenSimulator={() => navigateTo('simulation-setup')}
+          onExit={() => {
+            reset()
+          }}
+        />
+      case 'simulation-setup':
+        return <SimulationSetup />
     }
   }
 
@@ -67,6 +99,14 @@ const App: React.FC = () => {
         surveyName={appState.surveyKey}
         selectedLanguage={appState.selectedLanguage}
         languagecodes={appState.languageCodes}
+        onSelectLanguage={(code) => {
+          setAppState(prev => {
+            return {
+              ...prev,
+              selectedLanguage: code
+            }
+          })
+        }}
       />
       <div className="flex-grow-1">
         {pageContent()}
