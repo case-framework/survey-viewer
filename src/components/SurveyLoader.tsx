@@ -3,7 +3,7 @@ import { DialogBtn, FileDropzone } from 'case-web-ui';
 import { Survey } from 'survey-engine/lib/data_types';
 
 
-interface SurveyFileContent {
+export interface SurveyFileContent {
     studyKey: string;
     survey: Survey;
 }
@@ -43,10 +43,10 @@ const SurveyLoader: React.FC<SurveyLoaderProps> = (props) => {
 
     return (
         <div>
-            <div className="bg-primary text-white px-3 py-2a">
+            <div className="bg-primary text-white px-2 px-sm-3  py-2a">
                 <h4 className="fw-bold m-0">{texts.title}</h4>
             </div>
-            <div className="bg-grey-1 px-3 py-3">
+            <div className="bg-grey-1 px-2 px-sm-3 py-3">
                 <FileDropzone
                     placeholderText="Drag and drop a file here or click this box"
                     accept="application/json"
