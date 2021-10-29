@@ -4,6 +4,7 @@ import Navbar from './components/NavbarComp';
 import SimulationSetup from './components/SimulationSetup';
 import SurveyLoader, { SurveyFileContent } from './components/SurveyLoader';
 import SurveyMenu from './components/SurveyMenu';
+import SurveySimulator from './components/SurveySimulator';
 
 interface AppState {
   selectedLanguage?: string;
@@ -87,12 +88,33 @@ const App: React.FC = () => {
           }}
         />
       case 'simulation-setup':
-        return <SimulationSetup />
+        return <SimulationSetup
+          onStart={() => navigateTo('simulator')}
+          onExit={() => navigateTo('menu')}
+        />
+      case 'simulator':
+        return <SurveySimulator
+          texts={{
+            backBtn: 'Back',
+            nextBtn: 'Next',
+            submitBtn: 'Submit',
+            invalidResponseText: 'Invalid response',
+            noSurveyLoaded: 'Survey could not be loaded, please try again.'
+          }}
+          surveyAndContext={
+            appState.survey ? {
+              survey: appState.survey,
+              context: {}
+            } : undefined
+          }
+          selectedLanguage={appState.selectedLanguage}
+          onExit={() => navigateTo('simulation-setup')}
+        />
     }
   }
 
   return (
-    <div className="d-flex flex-column" style={{
+    <div className="d-flex flex-column overflow-scroll" style={{
       minHeight: '100vh'
     }}>
       <Navbar

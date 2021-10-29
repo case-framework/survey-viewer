@@ -28,7 +28,7 @@ const NavbarComp: React.FC<NavbarCompProps> = (props) => {
     return (
         <Navbar bg="primary" variant="dark">
             <div className="container">
-                <Navbar.Brand href="#home">
+                <Navbar.Brand>
                     CASE <span> Viewer</span>
                 </Navbar.Brand>
                 {props.surveyName ? <Navbar.Text>{props.surveyName}</Navbar.Text> : null}

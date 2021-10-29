@@ -11,9 +11,9 @@ interface SurveyMenuProps {
 
 const SurveyMenu: React.FC<SurveyMenuProps> = (props) => {
     return (
-        <div className="container my-3">
+        <div className="container mt-3">
             <div className="row">
-                <div className="col-sm-4">
+                <div className="col-sm-4 mb-3">
                     <h2>Actions</h2>
                     <div>
                         <button disabled className="btn btn-primary w-100 mb-2">
@@ -39,7 +39,7 @@ const SurveyMenu: React.FC<SurveyMenuProps> = (props) => {
                         </button>
                     </div>
                 </div>
-                <div className="col-sm-8">
+                <div className="col-sm-8 mb-3">
                     <h2>Infos</h2>
                     <h3>Survey Card</h3>
                     {
