@@ -1,5 +1,6 @@
 import { AlertBox, SurveyView } from 'case-web-ui';
 import React from 'react';
+import { Dropdown, DropdownButton } from 'react-bootstrap';
 import { Survey, SurveyContext } from 'survey-engine/lib/data_types';
 
 export interface SurveyUILabels {
@@ -23,10 +24,35 @@ interface SurveySimulatorProps {
 const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
     return (
         <div className="container-fluid">
-            <div className="container py-3">
+            <div className="container pt-3">
+                <div className="row">
+                    <DropdownButton
+                        id={`simulator-menu`}
+                        //size="sm"
+                        variant="secondary"
+                        title="Menu"
+                        onSelect={(eventKey) => {
+                            switch (eventKey) {
+                                case 'save':
+                                    break;
+                                case 'exit':
+                                    if (window.confirm('Do you want to exit the simulator (will lose state)?')) {
+                                        props.onExit();
+                                    }
+                                    break;
+                            }
+                        }}
+                    >
+                        <Dropdown.Item
+                            disabled
+                            eventKey="save">Save Current Survey State</Dropdown.Item>
+                        <Dropdown.Divider />
+                        <Dropdown.Item eventKey="exit">Exit Simulator</Dropdown.Item>
+                    </DropdownButton>
+                </div>
                 <div className="row">
                     <div className="col-12 col-lg-8 offset-lg-2"
-                        style={{ minHeight: '70vh' }}
+                    //style={{ minHeight: 'calc()' }}
                     >
                         {props.surveyAndContext ?
                             <SurveyView
@@ -48,27 +74,7 @@ const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
                     </div>
                 </div>
             </div>
-            <div className="row border-grey-2 border-top-2">
-                <div className="col">
-                    <button
-                        disabled
-                        className="btn btn-secondary mt-2 me-2">
-                        Save Current Survey State
-                    </button>
-
-                    <button
-                        className="btn btn-warning mt-2"
-                        onClick={() => {
-                            if (window.confirm('Do you want to exit the simulator (will lose current state)?')) {
-                                props.onExit()
-                            }
-                        }}
-                    >
-                        Exit Simulator
-                    </button>
-                </div>
-            </div>
-        </div>
+        </div >
     );
 };
 

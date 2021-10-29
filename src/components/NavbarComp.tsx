@@ -26,7 +26,7 @@ const NavbarComp: React.FC<NavbarCompProps> = (props) => {
     }
 
     return (
-        <Navbar bg="primary" variant="dark">
+        <Navbar bg="primary" variant="dark" className="py-1a">
             <div className="container">
                 <Navbar.Brand>
                     CASE <span> Viewer</span>
