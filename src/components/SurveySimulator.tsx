@@ -1,7 +1,7 @@
-import { AlertBox, SurveyView } from 'case-web-ui';
-import React from 'react';
+import { AlertBox, SurveyView, Dialog, DialogBtn } from 'case-web-ui';
+import React, { useState } from 'react';
 import { Dropdown, DropdownButton } from 'react-bootstrap';
-import { Survey, SurveyContext } from 'survey-engine/lib/data_types';
+import { Survey, SurveyContext, SurveySingleItemResponse } from 'survey-engine/lib/data_types';
 
 export interface SurveyUILabels {
     backBtn: string;
@@ -21,12 +21,58 @@ interface SurveySimulatorProps {
     surveyAndContext?: {
         survey: Survey;
         context: SurveyContext;
-    }
+    };
+    prefills?: SurveySingleItemResponse[];
     selectedLanguage?: string;
     onExit: () => void;
 }
 
 const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
+    const [openSurveyEndDialog, setOpenSurveyEndDialog] = useState(false);
+    const [surveyResponseData, setSurveyResponseData] = useState<SurveySingleItemResponse[]>([]);
+
+    const surveySubmitDialog = <Dialog
+        title="Survey Finished"
+        onClose={() => {
+            setSurveyResponseData([]);
+            setOpenSurveyEndDialog(false);
+            props.onExit();
+        }}
+        open={openSurveyEndDialog}
+        ariaLabelledBy="title"
+    >
+        <div className="px-3 py-2a">
+            <p>Survey finished. What do you want to do next?</p>
+            <DialogBtn
+                className="me-2"
+                onClick={() => {
+                    setSurveyResponseData([]);
+                    setOpenSurveyEndDialog(false);
+                    props.onExit();
+                }}
+                label="Exit without Save"
+                outlined={true}
+            />
+            <DialogBtn
+                onClick={() => {
+
+                    const exportData = surveyResponseData;
+                    var a = document.createElement("a");
+                    var file = new Blob([JSON.stringify(exportData, undefined, 2)], { type: 'json' });
+                    a.href = URL.createObjectURL(file);
+                    a.download = `${props.surveyAndContext?.survey.current.surveyDefinition.key}_responses_${(new Date()).toLocaleDateString()}.json`;
+                    a.click();
+
+                    setSurveyResponseData([]);
+                    setOpenSurveyEndDialog(false)
+                    props.onExit()
+                }}
+                label="Save and Exit"
+            />
+        </div>
+
+    </Dialog>
+
     return (
         <div className="container-fluid">
             <div className="container pt-3">
@@ -65,8 +111,12 @@ const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
                                 showKeys={props.config.showKeys}
                                 survey={props.surveyAndContext.survey}
                                 context={props.surveyAndContext.context}
+                                prefills={props.prefills}
                                 languageCode={props.selectedLanguage ? props.selectedLanguage : 'en'}
-                                onSubmit={() => alert('TODO')}
+                                onSubmit={(responses,) => {
+                                    setSurveyResponseData(responses.slice())
+                                    setOpenSurveyEndDialog(true);
+                                }}
                                 nextBtnText={props.config.texts.nextBtn}
                                 backBtnText={props.config.texts.backBtn}
                                 submitBtnText={props.config.texts.submitBtn}
@@ -80,6 +130,7 @@ const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
                     </div>
                 </div>
             </div>
+            {surveySubmitDialog}
         </div >
     );
 };

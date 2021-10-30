@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Survey } from 'survey-engine/lib/data_types';
+import { Survey, SurveyContext, SurveySingleItemResponse } from 'survey-engine/lib/data_types';
 import Navbar from './components/NavbarComp';
-import SimulationSetup, { defaultSimulatorUIConfig } from './components/SimulationSetup';
+import SimulationSetup, { defaultSimulatorUIConfig, defaultSurveyContext } from './components/SimulationSetup';
 import SurveyLoader, { SurveyFileContent } from './components/SurveyLoader';
 import SurveyMenu from './components/SurveyMenu';
 import SurveySimulator, { SimulatorUIConfig } from './components/SurveySimulator';
@@ -11,6 +11,9 @@ interface AppState {
   languageCodes?: string[];
   surveyKey?: string;
   survey?: Survey;
+  surveyContext: SurveyContext;
+  prefillsFile?: File;
+  prefillValues?: SurveySingleItemResponse[],
   screen: Screens;
   simulatorUIConfig: SimulatorUIConfig;
 }
@@ -20,6 +23,7 @@ type Screens = 'loader' | 'menu' | 'simulation-setup' | 'simulator';
 const initialState: AppState = {
   screen: 'loader',
   simulatorUIConfig: { ...defaultSimulatorUIConfig },
+  surveyContext: { ...defaultSurveyContext },
 }
 
 const App: React.FC = () => {
@@ -93,6 +97,54 @@ const App: React.FC = () => {
         return <SimulationSetup
           onStart={() => navigateTo('simulator')}
           onExit={() => navigateTo('menu')}
+          prefillsFile={appState.prefillsFile}
+          onPrefillChanged={(prefills?: File) => {
+            if (prefills) {
+              const reader = new FileReader()
+
+              reader.onabort = () => console.log('file reading was aborted')
+              reader.onerror = () => console.log('file reading has failed')
+              reader.onload = () => {
+                // Do whatever you want with the file contents
+                const res = reader.result;
+                if (!res || typeof (res) !== 'string') {
+                  console.error('TODO: handle file upload error')
+                  return;
+                }
+                const content = JSON.parse(res);
+                setAppState(prev => {
+                  return {
+                    ...prev,
+                    prefillsFile: prefills,
+                    prefillValues: content,
+
+                  }
+                })
+              }
+              reader.readAsText(prefills)
+            } else {
+              setAppState(prev => {
+                return {
+                  ...prev,
+                  prefillsFile: prefills,
+                  prefillValues: []
+
+                }
+              })
+            }
+
+
+
+          }}
+          currentSurveyContext={appState.surveyContext}
+          onSurveyContextChanged={(config) => setAppState(prev => {
+            return {
+              ...prev,
+              surveyContext: {
+                ...config
+              }
+            }
+          })}
           currentSimulatorUIConfig={appState.simulatorUIConfig}
           onSimulatorUIConfigChanged={(config) => setAppState(prev => {
             return {
@@ -110,9 +162,10 @@ const App: React.FC = () => {
           surveyAndContext={
             appState.survey ? {
               survey: appState.survey,
-              context: {}
+              context: appState.surveyContext
             } : undefined
           }
+          prefills={appState.prefillValues}
           selectedLanguage={appState.selectedLanguage}
           onExit={() => navigateTo('simulation-setup')}
         />
