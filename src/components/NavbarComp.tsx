@@ -12,16 +12,19 @@ const NavbarComp: React.FC<NavbarCompProps> = (props) => {
 
     const languageSelector = (codes: string[]) => {
         return (<Nav className="ms-auto">
-            <NavDropdown title={props.selectedLanguage} align="end" id="basic-nav-dropdown">
-                {codes.map(code => <NavDropdown.Item
-                    key={code}
-                    onClick={() => {
-                        if (props.onSelectLanguage) {
-                            props.onSelectLanguage(code)
-                        }
-                    }}
-                >{code}</NavDropdown.Item>)}
-            </NavDropdown>
+            {(codes.length === 1) ?
+                <Navbar.Text>{codes[0]}</Navbar.Text> :
+                <NavDropdown title={props.selectedLanguage} align="end" id="basic-nav-dropdown">
+                    {codes.map(code => <NavDropdown.Item
+                        key={code}
+                        onClick={() => {
+                            if (props.onSelectLanguage) {
+                                props.onSelectLanguage(code)
+                            }
+                        }}
+                    >{code}</NavDropdown.Item>)}
+                </NavDropdown>}
+
         </Nav>)
     }
 
