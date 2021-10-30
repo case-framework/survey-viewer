@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Survey } from 'survey-engine/lib/data_types';
 import Navbar from './components/NavbarComp';
-import SimulationSetup from './components/SimulationSetup';
+import SimulationSetup, { defaultSimulatorUIConfig } from './components/SimulationSetup';
 import SurveyLoader, { SurveyFileContent } from './components/SurveyLoader';
 import SurveyMenu from './components/SurveyMenu';
-import SurveySimulator from './components/SurveySimulator';
+import SurveySimulator, { SimulatorUIConfig } from './components/SurveySimulator';
 
 interface AppState {
   selectedLanguage?: string;
@@ -12,12 +12,14 @@ interface AppState {
   surveyKey?: string;
   survey?: Survey;
   screen: Screens;
+  simulatorUIConfig: SimulatorUIConfig;
 }
 
 type Screens = 'loader' | 'menu' | 'simulation-setup' | 'simulator';
 
 const initialState: AppState = {
   screen: 'loader',
+  simulatorUIConfig: { ...defaultSimulatorUIConfig },
 }
 
 const App: React.FC = () => {
@@ -91,16 +93,20 @@ const App: React.FC = () => {
         return <SimulationSetup
           onStart={() => navigateTo('simulator')}
           onExit={() => navigateTo('menu')}
+          currentSimulatorUIConfig={appState.simulatorUIConfig}
+          onSimulatorUIConfigChanged={(config) => setAppState(prev => {
+            return {
+              ...prev,
+              simulatorUIConfig: {
+                showKeys: config.showKeys,
+                texts: { ...config.texts }
+              }
+            }
+          })}
         />
       case 'simulator':
         return <SurveySimulator
-          texts={{
-            backBtn: 'Back',
-            nextBtn: 'Next',
-            submitBtn: 'Submit',
-            invalidResponseText: 'Invalid response',
-            noSurveyLoaded: 'Survey could not be loaded, please try again.'
-          }}
+          config={appState.simulatorUIConfig}
           surveyAndContext={
             appState.survey ? {
               survey: appState.survey,

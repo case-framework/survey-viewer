@@ -11,8 +11,13 @@ export interface SurveyUILabels {
     noSurveyLoaded: string;
 }
 
-interface SurveySimulatorProps {
+export interface SimulatorUIConfig {
     texts: SurveyUILabels;
+    showKeys: boolean;
+}
+
+interface SurveySimulatorProps {
+    config: SimulatorUIConfig;
     surveyAndContext?: {
         survey: Survey;
         context: SurveyContext;
@@ -57,18 +62,19 @@ const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
                         {props.surveyAndContext ?
                             <SurveyView
                                 loading={false}
+                                showKeys={props.config.showKeys}
                                 survey={props.surveyAndContext.survey}
                                 context={props.surveyAndContext.context}
                                 languageCode={props.selectedLanguage ? props.selectedLanguage : 'en'}
                                 onSubmit={() => alert('TODO')}
-                                nextBtnText={props.texts.nextBtn}
-                                backBtnText={props.texts.backBtn}
-                                submitBtnText={props.texts.submitBtn}
-                                invalidResponseText={props.texts.invalidResponseText}
+                                nextBtnText={props.config.texts.nextBtn}
+                                backBtnText={props.config.texts.backBtn}
+                                submitBtnText={props.config.texts.submitBtn}
+                                invalidResponseText={props.config.texts.invalidResponseText}
                             /> :
                             <AlertBox type="danger"
                                 useIcon={true}
-                                content={props.texts.noSurveyLoaded}
+                                content={props.config.texts.noSurveyLoaded}
                             />
                         }
                     </div>
