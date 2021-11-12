@@ -83,6 +83,30 @@ const SimulationSetup: React.FC<SimulationSetupProps> = (props) => {
         onClose={() => setOpenSurveyUIConfigUploadDialog(false)}
     />
 
+    const surveyContextUploader = <UploadDialog
+        open={openSurveyContextUploadDialog}
+        onReady={(file) => {
+            const reader = new FileReader()
+
+            reader.onabort = () => console.log('file reading was aborted')
+            reader.onerror = () => console.log('file reading has failed')
+            reader.onload = () => {
+                // Do whatever you want with the file contents
+                const res = reader.result;
+                if (!res || typeof (res) !== 'string') {
+                    console.error('TODO: handle file upload error')
+                    return;
+                }
+                const content = JSON.parse(res);
+                props.onSurveyContextChanged(
+                    content as SurveyContext
+                )
+            }
+            reader.readAsText(file)
+        }}
+        onClose={() => setOpenSurveyContextUploadDialog(false)}
+    />
+
 
 
     return (
@@ -97,7 +121,7 @@ const SimulationSetup: React.FC<SimulationSetupProps> = (props) => {
                     placeholderText="No file selected"
                     accept="application/json"
                     maxFiles={1}
-                    files={props.prefillsFile ? [props.prefillsFile] : undefined}
+                    files={props.prefillsFile ? [props.prefillsFile] : []}
                     onDrop={(acceptedFiles) => {
                         if (acceptedFiles.length > 0) {
                             props.onPrefillChanged(acceptedFiles[0]);
@@ -254,6 +278,7 @@ const SimulationSetup: React.FC<SimulationSetupProps> = (props) => {
 
             </Card>
             {navButtons}
+            {surveyContextUploader}
             {surveyUIConfigUploader}
         </div>
     );
