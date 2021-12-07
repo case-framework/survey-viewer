@@ -3,22 +3,21 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@fontsource/open-sans": "^4.5.1",
+    "@fontsource/open-sans": "^4.5.2",
     "@material-ui/core": "^4.11.3",
     "@monaco-editor/react": "^4.3.1",
-    "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^11.1.0",
-    "@testing-library/user-event": "^12.1.10",
-    "@types/jest": "^26.0.15",
-    "@types/node": "^12.0.0",
-    "@types/react": "^17.0.0",
-    "@types/react-dom": "^17.0.0",
+    "@testing-library/jest-dom": "^5.16.1",
+    "@testing-library/react": "^12.1.2",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.0.3",
+    "@types/node": "^16.11.12",
+    "@types/react": "^17.0.37",
+    "@types/react-dom": "^17.0.11",
     "bootstrap": "^5.1.3",
-    "case-web-ui": "^1.6.0-beta.9",
+    "case-web-ui": "^1.7.0-beta.9",
     "clsx": "^1.1.1",
-    "node-sass": "^5.0.0",
     "react": "^17.0.2",
-    "react-bootstrap": "^2.0.0",
+    "react-bootstrap": "^2.0.3",
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.3",
     "survey-engine": "^0.10.0",
@@ -48,5 +47,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "sass": "^1.44.0"
   }
 }
