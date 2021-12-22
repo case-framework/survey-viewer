@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Survey, SurveyContext, SurveySingleItemResponse } from 'survey-engine/lib/data_types';
+import { Survey, SurveyContext, SurveySingleItemResponse } from 'survey-engine/data_types';
 import Navbar from './components/NavbarComp';
 import SimulationSetup, { defaultSimulatorUIConfig, defaultSurveyContext } from './components/SimulationSetup';
 import SurveyLoader, { SurveyFileContent } from './components/SurveyLoader';

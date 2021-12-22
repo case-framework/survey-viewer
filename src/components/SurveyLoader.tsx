@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { DialogBtn, FileDropzone } from 'case-web-ui';
-import { Survey } from 'survey-engine/lib/data_types';
+import { Survey } from 'survey-engine/data_types';
 import Card from './Card';
 
 

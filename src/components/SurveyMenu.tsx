@@ -1,6 +1,6 @@
 import React from 'react';
 import { SurveyCard } from 'case-web-ui';
-import { LocalizedString, Survey } from 'survey-engine/lib/data_types';
+import { LocalizedString, Survey } from 'survey-engine/data_types';
 
 interface SurveyMenuProps {
     survey: Survey;

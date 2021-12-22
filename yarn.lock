@@ -3351,9 +3351,9 @@ caniuse-api@^3.0.0:
     lodash.uniq "^4.5.0"
 
 caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000981, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001125, caniuse-lite@^1.0.30001181:
-  version "1.0.30001191"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001191.tgz#bacb432b6701f690c8c5f7c680166b9a9f0843d9"
-  integrity sha512-xJJqzyd+7GCJXkcoBiQ1GuxEiOBCLQ0aVW9HMekifZsAVGdj5eJ4mFB9fEhSHipq9IOk/QXFJUiIr9lZT+EsGw==
+  version "1.0.30001291"
+  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001291.tgz"
+  integrity sha512-roMV5V0HNGgJ88s42eE70sstqGW/gwFndosYrikHthw98N5tLnOTxFqMLQjZVRxTWFlJ4rn+MsgXrR7MDPY4jA==
 
 capture-exit@^2.0.0:
   version "2.0.0"
@@ -3367,10 +3367,10 @@ case-sensitive-paths-webpack-plugin@2.3.0:
   resolved "https://registry.yarnpkg.com/case-sensitive-paths-webpack-plugin/-/case-sensitive-paths-webpack-plugin-2.3.0.tgz#23ac613cc9a856e4f88ff8bb73bbb5e989825cf7"
   integrity sha512-/4YgnZS8y1UXXmC02xD5rRrBEu6T5ub+mQHLNRj0fzTRbgdBYhsNo2V5EqwgqrExjxsjtF/OpAKAMkKsxbD5XQ==
 
-case-web-ui@^1.7.0-beta.9:
-  version "1.7.0-beta.9"
-  resolved "https://registry.yarnpkg.com/case-web-ui/-/case-web-ui-1.7.0-beta.9.tgz#3bc50ec766a99424c44ec1651014ee5352196d30"
-  integrity sha512-CHg0h7CORW1sCybAhA694h7kAnpCd3r0WEmlSg8xZrLjXL9ZzSsmJ/nondbVlQv9l0H677v+JImQdx0pxCw2Vw==
+case-web-ui@^1.7.0-beta.12:
+  version "1.7.0-beta.12"
+  resolved "https://registry.yarnpkg.com/case-web-ui/-/case-web-ui-1.7.0-beta.12.tgz#270c1ce969bed5797c2aacf7bc1e6c3793aeb187"
+  integrity sha512-XNl+CnD25xduSOYyuCA4q84Vx6UWrwTZbiJ1mMvdme5tswODvZgnE0Z+ly+A+FxKHGi4QST9+TfkLEYiSPsktg==
   dependencies:
     "@fortawesome/fontawesome-free" "^5.15.4"
 
@@ -10838,10 +10838,10 @@ supports-hyperlinks@^2.0.0:
     has-flag "^4.0.0"
     supports-color "^7.0.0"
 
-survey-engine@^0.10.0:
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/survey-engine/-/survey-engine-0.10.0.tgz#e9c9cdb2de38c33a9ec824d180b611d0d1321d6e"
-  integrity sha512-xGgbbLPZVeG7N2NbnWVnOx3bRTG0gB8PWupQnwj5KVJJQB9+voXZXK3671qwR1NAiUlVwD3rd2KTnTqH90DK4g==
+survey-engine@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/survey-engine/-/survey-engine-1.0.2.tgz#25ce0f38efd8d79b3e12e075a3fd172232643d90"
+  integrity sha512-dXT7ogjCdWsRFdE4Khj0S79APv4QIGiJGpU5NzOFFsT47ESIifbba4tCJwRdQqIDqgE/GO6YzFh/1O6MLahPHQ==
   dependencies:
     moment "2.24.0"
 

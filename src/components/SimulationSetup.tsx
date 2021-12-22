@@ -2,7 +2,7 @@ import Editor from '@monaco-editor/react';
 import { Checkbox, FileDropzone } from 'case-web-ui';
 import clsx from 'clsx';
 import React, { useState } from 'react';
-import { SurveyContext } from 'survey-engine/lib/data_types';
+import { SurveyContext } from 'survey-engine/data_types';
 import Card from './Card';
 import { SimulatorUIConfig, SurveyUILabels } from './SurveySimulator';
 import UploadDialog from './UploadDialog';

@@ -1,7 +1,7 @@
 import { AlertBox, SurveyView, Dialog, DialogBtn } from 'case-web-ui';
 import React, { useState } from 'react';
 import { Dropdown, DropdownButton } from 'react-bootstrap';
-import { Survey, SurveyContext, SurveySingleItemResponse } from 'survey-engine/lib/data_types';
+import { Survey, SurveyContext, SurveySingleItemResponse } from 'survey-engine/data_types';
 
 export interface SurveyUILabels {
     backBtn: string;
