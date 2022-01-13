@@ -30,6 +30,7 @@ export const defaultSimulatorUIConfig: SimulatorUIConfig = {
 }
 
 export const defaultSurveyContext: SurveyContext = {
+    isLoggedIn: false,
     participantFlags: {},
 }
 
