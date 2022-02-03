@@ -3,6 +3,17 @@ import React, { useState } from 'react';
 import { Dropdown, DropdownButton } from 'react-bootstrap';
 import { Survey, SurveyContext, SurveySingleItemResponse } from 'survey-engine/data_types';
 
+import { nl, nlBE, fr, de, it } from 'date-fns/locale';
+
+const dateLocales = [
+    { code: 'nl', locale: nl, format: 'dd-MM-yyyy' },
+    { code: 'nl-be', locale: nlBE, format: 'dd.MM.yyyy' },
+    { code: 'fr-be', locale: fr, format: 'dd.MM.yyyy' },
+    { code: 'de-be', locale: de, format: 'dd.MM.yyyy' },
+    { code: 'it', locale: it, format: 'dd/MM/yyyy' },
+];
+
+
 export interface SurveyUILabels {
     backBtn: string;
     nextBtn: string;
@@ -121,6 +132,7 @@ const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
                                 backBtnText={props.config.texts.backBtn}
                                 submitBtnText={props.config.texts.submitBtn}
                                 invalidResponseText={props.config.texts.invalidResponseText}
+                                dateLocales={dateLocales}
                             /> :
                             <AlertBox type="danger"
                                 useIcon={true}
