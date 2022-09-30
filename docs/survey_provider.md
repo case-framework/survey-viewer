@@ -23,10 +23,15 @@ The server has to provide two type of contents using the following URI(baseUrl i
 - {baseUrl}/survey?id={id} where {id} is the id of the survey to load of the SurveyDescription object
 
 ```ts
+
 interface SurveyDescription {
     id: string // Id to load the survey
-    label: string // Label of the survey to load
-    description: string // Optional description 
+    label: string
+    description: { // Description label with language code as key
+        [key:string]: string
+    }
+    time: string; // Time of the json file
+    study: string; // StudyKey in the json file
 }
 
 ```
