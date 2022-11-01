@@ -1,5 +1,6 @@
 import { Dialog, DialogBtn, FileDropzone } from 'case-web-ui';
 import React, { useEffect, useState } from 'react';
+import { acceptJSON } from './constants';
 
 interface UploadDialogProps {
     open: boolean;
@@ -26,7 +27,7 @@ const UploadDialog: React.FC<UploadDialogProps> = (props) => {
             <div className="px-3 py-2a">
                 <p>Select a JSON files:</p>
                 {props.open ? <FileDropzone
-                    accept="application/json"
+                    accept={acceptJSON}
                     placeholderText="Select a file"
                     maxFiles={1}
                     onDrop={(files) => {
