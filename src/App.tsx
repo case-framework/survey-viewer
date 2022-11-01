@@ -6,6 +6,7 @@ import SurveyLoader, { SurveyFileContent } from './components/SurveyLoader';
 import SurveyMenu from './components/SurveyMenu';
 import SurveyServiceLoader from './components/SurveyServiceLoader';
 import SurveySimulator, { SimulatorUIConfig } from './components/SurveySimulator';
+import { getSurveyDefinition } from './utils/survey';
 
 interface AppState {
   selectedLanguage?: string;
@@ -48,7 +49,9 @@ const App: React.FC = () => {
       return;
     }
 
-    const surveyKey = surveyObject.survey.current.surveyDefinition.key;
+    const surveyDef = getSurveyDefinition(surveyObject.survey);
+
+    const surveyKey = surveyDef.key;
 
     setAppState({
       ...initialState,
