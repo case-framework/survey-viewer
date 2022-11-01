@@ -120,7 +120,7 @@ const SimulationSetup: React.FC<SimulationSetupProps> = (props) => {
                 <h6 className="fw-bold">Prefill:</h6>
                 <FileDropzone
                     placeholderText="No file selected"
-                    accept="application/json"
+                    accept={{"application/json": [".json"]}}
                     maxFiles={1}
                     files={props.prefillsFile ? [props.prefillsFile] : []}
                     onDrop={(acceptedFiles) => {
