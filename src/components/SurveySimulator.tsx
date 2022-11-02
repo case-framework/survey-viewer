@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import { Dropdown, DropdownButton } from 'react-bootstrap';
 import { Survey, SurveyContext, SurveySingleItemResponse } from 'survey-engine/data_types';
 
-import { nl, nlBE, fr, de, it } from 'date-fns/locale';
+import { nl, nlBE, fr, de, it, da, es, pt } from 'date-fns/locale';
+import { CustomSurveyResponseComponent } from 'case-web-ui/build/components/survey/SurveySingleItemView/ResponseComponent/ResponseComponent';
 
 const dateLocales = [
     { code: 'nl', locale: nl, format: 'dd-MM-yyyy' },
@@ -11,8 +12,11 @@ const dateLocales = [
     { code: 'fr-be', locale: fr, format: 'dd.MM.yyyy' },
     { code: 'de-be', locale: de, format: 'dd.MM.yyyy' },
     { code: 'it', locale: it, format: 'dd/MM/yyyy' },
+    { code: 'fr', locale: fr, format: 'dd/MM/yyyy'},
+    { code: 'dk', locale: da, format: 'dd/MM/yyyy'},
+    { code: 'es', locale: es, format: 'dd/MM/yyyy'},
+    { code: 'pt', locale: pt, format: 'dd/MM/yyyy'},
 ];
-
 
 export interface SurveyUILabels {
     backBtn: string;
@@ -35,6 +39,7 @@ interface SurveySimulatorProps {
     };
     prefills?: SurveySingleItemResponse[];
     selectedLanguage?: string;
+    customResponseComponents?:CustomSurveyResponseComponent[]
     onExit: () => void;
 }
 
@@ -133,6 +138,7 @@ const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
                                 submitBtnText={props.config.texts.submitBtn}
                                 invalidResponseText={props.config.texts.invalidResponseText}
                                 dateLocales={dateLocales}
+                                customResponseComponents={props.customResponseComponents}
                             /> :
                             <AlertBox type="danger"
                                 useIcon={true}
