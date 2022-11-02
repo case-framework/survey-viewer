@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { DialogBtn, FileDropzone } from 'case-web-ui';
 import { Survey } from 'survey-engine/data_types';
 import Card from './Card';
+import { acceptJSON } from './constants';
 
 
 export interface SurveyFileContent {
@@ -46,7 +47,7 @@ const SurveyLoader: React.FC<SurveyLoaderProps> = (props) => {
         <Card title={texts.title}>
             <FileDropzone
                 placeholderText="Drag and drop a file here or click this box"
-                accept="application/json"
+                accept={acceptJSON}
                 maxFiles={1}
                 onDrop={(acceptedFiles, rejected, event) => {
                     if (acceptedFiles.length > 0) {

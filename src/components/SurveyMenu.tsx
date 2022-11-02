@@ -1,6 +1,7 @@
 import React from 'react';
 import { SurveyCard } from 'case-web-ui';
 import { LocalizedString, Survey } from 'survey-engine/data_types';
+import { getSurveyDefinition } from '../utils/survey';
 
 interface SurveyMenuProps {
     survey: Survey;
@@ -10,6 +11,9 @@ interface SurveyMenuProps {
 }
 
 const SurveyMenu: React.FC<SurveyMenuProps> = (props) => {
+
+    const surveyDefinition = getSurveyDefinition(props.survey);
+
     return (
         <div className="container mt-3">
             <div className="row">
@@ -50,10 +54,10 @@ const SurveyMenu: React.FC<SurveyMenuProps> = (props) => {
                                     description: props.survey.props.description as LocalizedString[],
                                     typicalDuration: props.survey.props.typicalDuration as LocalizedString[],
                                     studyKey: '',
-                                    surveyKey: props.survey.current.surveyDefinition.key,
+                                    surveyKey: surveyDefinition.key,
                                 },
                                 studyKey: '',
-                                surveyKey: props.survey.current.surveyDefinition.key,
+                                surveyKey: surveyDefinition.key,
                                 profiles: [],
                                 category: 'normal'
                             }}

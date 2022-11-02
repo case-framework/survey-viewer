@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import React, { useState } from 'react';
 import { SurveyContext } from 'survey-engine/data_types';
 import Card from './Card';
+import { acceptJSON } from './constants';
 import { SimulatorUIConfig, SurveyUILabels } from './SurveySimulator';
 import UploadDialog from './UploadDialog';
 
@@ -120,7 +121,7 @@ const SimulationSetup: React.FC<SimulationSetupProps> = (props) => {
                 <h6 className="fw-bold">Prefill:</h6>
                 <FileDropzone
                     placeholderText="No file selected"
-                    accept="application/json"
+                    accept={acceptJSON}
                     maxFiles={1}
                     files={props.prefillsFile ? [props.prefillsFile] : []}
                     onDrop={(acceptedFiles) => {

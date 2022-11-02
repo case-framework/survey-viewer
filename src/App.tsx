@@ -4,7 +4,9 @@ import Navbar from './components/NavbarComp';
 import SimulationSetup, { defaultSimulatorUIConfig, defaultSurveyContext } from './components/SimulationSetup';
 import SurveyLoader, { SurveyFileContent } from './components/SurveyLoader';
 import SurveyMenu from './components/SurveyMenu';
+import SurveyServiceLoader from './components/SurveyServiceLoader';
 import SurveySimulator, { SimulatorUIConfig } from './components/SurveySimulator';
+import { getSurveyDefinition } from './utils/survey';
 
 interface AppState {
   selectedLanguage?: string;
@@ -26,6 +28,10 @@ const initialState: AppState = {
   surveyContext: { ...defaultSurveyContext },
 }
 
+const surveyProviderUrl = process.env.REACT_APP_SURVEY_URL ?? "";
+
+console.log("Using provider "+ surveyProviderUrl);
+
 const App: React.FC = () => {
   const [appState, setAppState] = useState<AppState>({
     ...initialState
@@ -43,7 +49,9 @@ const App: React.FC = () => {
       return;
     }
 
-    const surveyKey = surveyObject.survey.current.surveyDefinition.key;
+    const surveyDef = getSurveyDefinition(surveyObject.survey);
+
+    const surveyKey = surveyDef.key;
 
     setAppState({
       ...initialState,
@@ -76,7 +84,10 @@ const App: React.FC = () => {
         }}>
           <div className="row flex-grow-1">
             <div className="col-12">
-              <SurveyLoader onSurveyLoaded={onLoadSurvey} />
+            <SurveyLoader onSurveyLoaded={onLoadSurvey} />
+              {
+                surveyProviderUrl ? <SurveyServiceLoader onSurveyLoaded={onLoadSurvey} surveyProviderUrl={surveyProviderUrl} /> : null
+              }
             </div>
           </div>
         </div>
