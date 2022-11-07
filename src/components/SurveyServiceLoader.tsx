@@ -5,11 +5,6 @@ import { useEffect, useState } from 'react';
 import Card from './Card';
 import { format, parseISO } from 'date-fns';
 
-export interface SurveyFileContent {
-    studyKey: string;
-    survey: Survey;
-}
-
 interface localisedString {
     [key:string]: string;
 }
@@ -24,7 +19,7 @@ interface SurveyDescription {
 
 interface SurveyLoaderProps {
     surveyProviderUrl: string
-    onSurveyLoaded: (surveyFileContent: SurveyFileContent) => void;
+    onSurveyLoaded: (surveyFileContent: Survey) => void;
 }
 
 interface SurveyListUIText {
@@ -154,7 +149,7 @@ const SurveyServiceLoader: React.FC<SurveyLoaderProps> = (props) => {
 
     const loadSurveyJSON = (id: string) => {
         fetch(props.surveyProviderUrl + '/survey?id=' + id).then((r)=>{
-            r.json().then(function(survey: SurveyFileContent){
+            r.json().then(function(survey: Survey){
                 props.onSurveyLoaded(survey);
             });
         });

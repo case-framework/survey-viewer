@@ -1,7 +1,6 @@
 import React from 'react';
 import { SurveyCard } from 'case-web-ui';
 import { LocalizedString, Survey } from 'survey-engine/data_types';
-import { getSurveyDefinition } from '../utils/survey';
 
 interface SurveyMenuProps {
     survey: Survey;
@@ -12,7 +11,7 @@ interface SurveyMenuProps {
 
 const SurveyMenu: React.FC<SurveyMenuProps> = (props) => {
 
-    const surveyDefinition = getSurveyDefinition(props.survey);
+    const surveyDefinition = props.survey.surveyDefinition;
 
     return (
         <div className="container mt-3">

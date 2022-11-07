@@ -76,7 +76,7 @@ const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
                     var a = document.createElement("a");
                     var file = new Blob([JSON.stringify(exportData, undefined, 2)], { type: 'json' });
                     a.href = URL.createObjectURL(file);
-                    a.download = `${props.surveyAndContext?.survey.current.surveyDefinition.key}_responses_${(new Date()).toLocaleDateString()}.json`;
+                    a.download = `${props.surveyAndContext?.survey.surveyDefinition.key}_responses_${(new Date()).toLocaleDateString()}.json`;
                     a.click();
 
                     setSurveyResponseData([]);
