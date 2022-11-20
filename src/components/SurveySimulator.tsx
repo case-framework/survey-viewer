@@ -1,9 +1,12 @@
 import { AlertBox, SurveyView, Dialog, DialogBtn } from 'case-web-ui';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dropdown, DropdownButton } from 'react-bootstrap';
 import { Survey, SurveyContext, SurveySingleItemResponse } from 'survey-engine/data_types';
 
 import { nl, nlBE, fr, de, it } from 'date-fns/locale';
+import { SurveyEngineCore } from 'survey-engine/engine';
+import { EngineState, SurveyExpressionEvaluator } from './SurveyExpressionEvaluator';
+import { getSurveyDefinition } from '../utils/survey';
 
 const dateLocales = [
     { code: 'nl', locale: nl, format: 'dd-MM-yyyy' },
@@ -38,10 +41,32 @@ interface SurveySimulatorProps {
     onExit: () => void;
 }
 
+
 const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
+
+    const surveyDefinition = props.surveyAndContext ? getSurveyDefinition(props.surveyAndContext.survey) : undefined;
+
     const [openSurveyEndDialog, setOpenSurveyEndDialog] = useState(false);
     const [surveyResponseData, setSurveyResponseData] = useState<SurveySingleItemResponse[]>([]);
 
+    const [engineState, setEngineState ] = useState<EngineState>(new EngineState(surveyDefinition));
+    const [engineReady, setEngineReady ] = useState<boolean>(false); // Engine has been set
+    const [evaluatorCounter, setEvaluatorCounter ] = useState<number>(0); // Ok to show the evaluator (after engineReady is true)
+
+    useEffect(()=> {
+        if(engineReady) {
+            setEvaluatorCounter(evaluatorCounter + 1);
+            engineState.update();
+        }
+    }, [engineReady, engineState]);
+
+
+    const onResponseChanged=(responses: SurveySingleItemResponse[], version: string, engine: SurveyEngineCore) => {
+        console.log(responses, engineState.engine, engine);
+        engineState.setEngine(engine);
+        setEngineReady(true);
+    }
+    
     const surveySubmitDialog = <Dialog
         title="Survey Finished"
         onClose={() => {
@@ -71,7 +96,7 @@ const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
                     var a = document.createElement("a");
                     var file = new Blob([JSON.stringify(exportData, undefined, 2)], { type: 'json' });
                     a.href = URL.createObjectURL(file);
-                    a.download = `${props.surveyAndContext?.survey.current.surveyDefinition.key}_responses_${(new Date()).toLocaleDateString()}.json`;
+                    a.download = `${surveyDefinition?.key}_responses_${(new Date()).toLocaleDateString()}.json`;
                     a.click();
 
                     setSurveyResponseData([]);
@@ -113,9 +138,7 @@ const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
                     </DropdownButton>
                 </div>
                 <div className="row">
-                    <div className="col-12 col-lg-8 offset-lg-2"
-                    //style={{ minHeight: 'calc()' }}
-                    >
+                    <div className="col-8">
                         {props.surveyAndContext ?
                             <SurveyView
                                 loading={false}
@@ -128,6 +151,7 @@ const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
                                     setSurveyResponseData(responses.slice())
                                     setOpenSurveyEndDialog(true);
                                 }}
+                                onResponsesChanged={onResponseChanged}
                                 nextBtnText={props.config.texts.nextBtn}
                                 backBtnText={props.config.texts.backBtn}
                                 submitBtnText={props.config.texts.submitBtn}
@@ -140,11 +164,16 @@ const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
                             />
                         }
                     </div>
+                    <div className="col-4">
+                        Evaluation
+                        { evaluatorCounter ? <SurveyExpressionEvaluator engineState={engineState} update={evaluatorCounter} /> : '' }
+                    </div>
                 </div>
             </div>
             {surveySubmitDialog}
         </div >
     );
 };
+
 
 export default SurveySimulator;
