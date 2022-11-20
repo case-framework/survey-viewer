@@ -5,6 +5,7 @@ import Editor from '@monaco-editor/react';
 import clsx from 'clsx';
 
 import { SurveyEngineCore } from 'survey-engine/engine';
+import { Icon, IconButton } from '@material-ui/core';
 
 interface ExpressionRef {
     exp: Expression;
@@ -12,8 +13,12 @@ interface ExpressionRef {
     key: string;
     value?: any;
     changed?: boolean;
+    show: boolean;
 }
 
+/**
+ * Expression Registry collect all known expression in a survey
+ */
 class ExpressionRegistry {
     
     exps : Map<string, ExpressionRef[]>;
@@ -34,7 +39,8 @@ class ExpressionRegistry {
         const ref = {
             key: key,
             field: field,
-            exp: exp
+            exp: exp,
+            show: true
         };
 
         if(!this.exps.has(itemKey)) {
@@ -132,6 +138,8 @@ export const ExpressionList: React.FC<ExpressionListProps> = (props) => {
 
     const list = props.engineState.registry.exps;
 
+    const [refresh, setRefresh] = useState(false);
+
     const toFunc = (e: Expression):string => {
         var p : string[];
 
@@ -155,13 +163,16 @@ export const ExpressionList: React.FC<ExpressionListProps> = (props) => {
 
     const ExpItem = (itemKey: string, ref: ExpressionRef, index: number) => {
         return <ListGroup.Item key={itemKey + '=' + index} className={clsx({'bg-warning': ref.changed})}>
-            <small>{itemKey}:{ref.key}</small> <b>{ref.field}</b> 
-            <p>{ toFunc(ref.exp) }</p>
+            <span>
+                <small>{itemKey}:{ref.key}</small> 
+                <b>{ref.field}</b> 
+            </span>
+            <p><code>{ toFunc(ref.exp) }</code></p>
             <p>{ JSON.stringify(ref.value) }</p>
         </ListGroup.Item>
     };
 
-    const buildList = () => {
+    const buildList = (refresh: boolean) => {
         const r : ReactNode[] = [];
         list.forEach( (refs, key) => {
             r.push( ...refs.map( (ref, index) => ExpItem(key, ref, index)) );
@@ -170,7 +181,7 @@ export const ExpressionList: React.FC<ExpressionListProps> = (props) => {
     }
 
     return <ListGroup>
-        { buildList() }
+        { buildList(refresh) }
     </ListGroup>
 
 }

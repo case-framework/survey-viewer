@@ -4,14 +4,8 @@ import { Survey } from 'survey-engine/data_types';
 import Card from './Card';
 import { acceptJSON } from './constants';
 
-
-export interface SurveyFileContent {
-    studyKey: string;
-    survey: Survey;
-}
-
 interface SurveyLoaderProps {
-    onSurveyLoaded: (surveyFileContent: SurveyFileContent) => void;
+    onSurveyLoaded: (survey: Survey) => void;
 }
 
 const SurveyLoader: React.FC<SurveyLoaderProps> = (props) => {
@@ -38,7 +32,7 @@ const SurveyLoader: React.FC<SurveyLoaderProps> = (props) => {
                 return;
             }
             const content = JSON.parse(res);
-            props.onSurveyLoaded(content as SurveyFileContent);
+            props.onSurveyLoaded(content as Survey);
         }
         reader.readAsText(file)
     }

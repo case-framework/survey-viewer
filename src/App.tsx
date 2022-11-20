@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import { Survey, SurveyContext, SurveySingleItemResponse } from 'survey-engine/data_types';
 import Navbar from './components/NavbarComp';
 import SimulationSetup, { defaultSimulatorUIConfig, defaultSurveyContext } from './components/SimulationSetup';
-import SurveyLoader, { SurveyFileContent } from './components/SurveyLoader';
+import SurveyLoader from './components/SurveyLoader';
 import SurveyMenu from './components/SurveyMenu';
 import SurveyServiceLoader from './components/SurveyServiceLoader';
 import SurveySimulator, { SimulatorUIConfig } from './components/SurveySimulator';
-import { getSurveyDefinition } from './utils/survey';
 
 interface AppState {
   selectedLanguage?: string;
@@ -37,19 +36,19 @@ const App: React.FC = () => {
     ...initialState
   })
 
-  const onLoadSurvey = (surveyObject: SurveyFileContent) => {
-    if (!surveyObject.survey) {
+  const onLoadSurvey = (surveyObject: Survey) => {
+    if (!surveyObject) {
       alert('No survey content found.');
       return;
     }
 
-    const languageCodes = surveyObject.survey.props?.name?.map(o => o.code);
+    const languageCodes = surveyObject.props?.name?.map(o => o.code);
     if (!languageCodes || languageCodes.length < 1) {
       alert('Languages cannot be extracted');
       return;
     }
 
-    const surveyDef = getSurveyDefinition(surveyObject.survey);
+    const surveyDef = surveyObject.surveyDefinition;
 
     const surveyKey = surveyDef.key;
 
@@ -59,7 +58,7 @@ const App: React.FC = () => {
       languageCodes: languageCodes,
       surveyKey: surveyKey,
       screen: 'menu',
-      survey: surveyObject.survey,
+      survey: surveyObject
     })
   }
 
