@@ -1,4 +1,4 @@
-import { AlertBox, SurveyView, Dialog, DialogBtn } from 'case-web-ui';
+import { AlertBox, SurveyView, Dialog, DialogBtn, Checkbox } from 'case-web-ui';
 import React, { useEffect, useState } from 'react';
 import { Button, Dropdown, DropdownButton } from 'react-bootstrap';
 import { Survey, SurveyContext, SurveySingleItemResponse } from 'survey-engine/data_types';
@@ -58,6 +58,7 @@ const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
     const [evaluatorCounter, setEvaluatorCounter ] = useState<number>(0); // Ok to show the evaluator (after engineReady is true)
     const [showEvaluator, setShowEvaluator] = useState<boolean>(false);
 
+    const [showKeys, setShowKeys ] = useState<boolean>(props.config.showKeys);
 
     const onResponseChanged=(responses: SurveySingleItemResponse[], version: string, engine: SurveyEngineCore) => {
         console.log(responses, engineState.engine, engine);
@@ -114,42 +115,23 @@ const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
 
     return (
         <div className="container-fluid">
-            <div className={ clsx(showEvaluator ? "container-fluid" : 'container', " pt-3") }>
-                <div className="row mb-1">
-                    <div className="col">
-                        <DropdownButton
-                            className='me-1 d-inline'
-                            id={`simulator-menu`}
-                            //size="sm"
-                            variant="secondary"
-                            title="Menu"
-                            onSelect={(eventKey) => {
-                                switch (eventKey) {
-                                    case 'save':
-                                        break;
-                                    case 'exit':
-                                        if (window.confirm('Do you want to exit the simulator (will lose state)?')) {
+            <div className='row'>
+            <div className="col p-1">
+                        <Button onClick={()=>{ if (window.confirm('Do you want to exit the simulator (will lose state)?')) {
                                             props.onExit();
-                                        }
-                                        break;
-                                }
-                            }}
-                        >
-                            <Dropdown.Item
-                                disabled
-                                eventKey="save">Save Current Survey State</Dropdown.Item>
-                            <Dropdown.Divider />
-                            <Dropdown.Item eventKey="exit">Exit Simulator</Dropdown.Item>
-                        </DropdownButton>
+                                        }}} variant="warning" className="me-1"> Exit</Button>
+                        
                         <Button onClick={toggleEvaluator}>SHow Expression evaluator</Button>
+                        <label className='d-inline mx-1'><input type="checkbox" checked={showKeys} onClick={()=>setShowKeys(!showKeys)}/> Show keys</label>
                     </div>
-                </div>
+            </div>
+            <div className={ clsx(showEvaluator ? "container-fluid" : 'container', " pt-3") }>
                 <div className="row">
                     <div className={ clsx( showEvaluator ? "col-7" : "col-10") }>
                         {props.surveyAndContext ?
                             <SurveyView
                                 loading={false}
-                                showKeys={props.config.showKeys}
+                                showKeys={showKeys}
                                 survey={props.surveyAndContext.survey}
                                 context={props.surveyAndContext.context}
                                 prefills={props.prefills}
@@ -172,7 +154,7 @@ const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
                             />
                         }
                     </div>
-                    <div className={ clsx( showEvaluator ? "col-5" : "hidden" ) }>
+                    <div className={ clsx( showEvaluator ? "col-5" : "d-none" ) }>
                         Evaluation
                         { evaluatorCounter ? <SurveyExpressionEvaluator engineState={engineState} update={evaluatorCounter} /> : '' }
                     </div>
