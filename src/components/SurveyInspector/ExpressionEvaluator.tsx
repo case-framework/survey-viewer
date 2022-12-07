@@ -1,18 +1,19 @@
 import React, { ReactNode, useState } from 'react';
-import { Button, ListGroup } from 'react-bootstrap';
-import { Expression, ExpressionArg, isExpression, isItemGroupComponent, isSurveyGroupItem, ItemComponent, SurveyGroupItem, SurveyItem } from 'survey-engine/data_types';
-import Editor from '@monaco-editor/react';
+import {  ListGroup, Tabs, Tab, } from 'react-bootstrap';
+import { Expression, ExpressionArg, isExpression, isItemGroupComponent, isSurveyGroupItem, ItemComponent, SurveyGroupItem, SurveyItem, SurveySingleItemResponse } from 'survey-engine/data_types';
 import clsx from 'clsx';
 
 import { SurveyEngineCore } from 'survey-engine/engine';
-import { Icon, IconButton } from '@material-ui/core';
 
+/**
+ * Reference to an expression in a survey
+ */
 interface ExpressionRef {
-    exp: Expression;
-    field: string;
-    key: string;
-    value?: any;
-    changed?: boolean;
+    exp: Expression; // The expression to inspect
+    field: string; // Field in the survey item
+    key: string; // itemKey where the expression lives
+    value?: any; // Resolved value with the last state
+    changed?: boolean; // Does this value change after the last survey state transition ?
     show: boolean;
 }
 
@@ -21,10 +22,13 @@ interface ExpressionRef {
  */
 class ExpressionRegistry {
     
-    exps : Map<string, ExpressionRef[]>;
+    exps : Map<string, ExpressionRef[]>; // All known expressions
+
+    fields: Set<string>;
 
     constructor() {
         this.exps = new Map();
+        this.fields = new Set();
     }
 
     build(survey: SurveyGroupItem) {
@@ -50,6 +54,9 @@ class ExpressionRegistry {
             const rr = this.exps.get(itemKey);
             rr?.push(ref);
         }
+        if(field) {
+            this.fields.add(field);
+        }
     }
 
     handleComponent(itemKey:string, comp: ItemComponent, index: number) {
@@ -71,6 +78,7 @@ class ExpressionRegistry {
             handleProp(comp.properties.dateInputMode, 'dateInputMode');
             handleProp(comp.properties.stepSize, 'stepSize');
         }
+        if(comp)
         if(isItemGroupComponent(comp)) {
             comp.items.forEach( (c, i) => this.handleComponent(itemKey, c, i));
         }
@@ -89,19 +97,28 @@ class ExpressionRegistry {
             if(item.components) {
                 this.handleComponent(item.key, item.components, 0);
             }
+            if(item.validations) {
+                item.validations.forEach((v) => {
+                    if(isExpression(v.rule)) {
+                        this.add(item.key, v.key,  'validations' , v.rule );
+                    }  
+                });
+            }
         }
-   }
+    }
 }  
 
 export class EngineState {
     engine?: SurveyEngineCore;
     surveyDefinition?: SurveyGroupItem
     registry: ExpressionRegistry
+    responses?: SurveySingleItemResponse[]
 
     constructor(surveyDefinition?: SurveyGroupItem) {
         this.engine = undefined;
         this.registry = new ExpressionRegistry();
-            this.surveyDefinition = surveyDefinition;
+        this.responses = undefined;
+        this.surveyDefinition = surveyDefinition;
         if(surveyDefinition) {
             this.registry.build(surveyDefinition);
         }
@@ -109,6 +126,10 @@ export class EngineState {
 
     setEngine(engine: SurveyEngineCore) {
         this.engine = engine;
+    }
+
+    setResponses(responses : SurveySingleItemResponse[]) {
+        this.responses = responses;
     }
 
     update() {
@@ -122,12 +143,6 @@ export class EngineState {
     }
 }
 
-
-interface SurveyEvaluatorProps {
-    engineState: EngineState
-    update: number;
-} 
-
 interface ExpressionListProps {
     engineState: EngineState
     update: number;
@@ -138,6 +153,8 @@ export const ExpressionList: React.FC<ExpressionListProps> = (props) => {
 
     const list = props.engineState.registry.exps;
 
+    const [search, setSearch] = useState<string|undefined>(undefined);
+   
     const [refresh, setRefresh] = useState(false);
 
     const toFunc = (e: Expression):string => {
@@ -164,7 +181,7 @@ export const ExpressionList: React.FC<ExpressionListProps> = (props) => {
     const ExpItem = (itemKey: string, ref: ExpressionRef, index: number) => {
         return <ListGroup.Item key={itemKey + '=' + index} className={clsx({'bg-warning': ref.changed})}>
             <span>
-                <small>{itemKey}:{ref.key}</small> 
+                <small>{itemKey}{ref.key ? ' [' + ref.key + ']' : ''}</small> 
                 <b>{ref.field}</b> 
             </span>
             <p><code>{ toFunc(ref.exp) }</code></p>
@@ -175,72 +192,22 @@ export const ExpressionList: React.FC<ExpressionListProps> = (props) => {
     const buildList = (refresh: boolean) => {
         const r : ReactNode[] = [];
         list.forEach( (refs, key) => {
+            if(search) {
+                if(!key.includes(search) ){
+                    return;
+                }
+            }
             r.push( ...refs.map( (ref, index) => ExpItem(key, ref, index)) );
         });
         return r;
     }
 
-    return <ListGroup>
-        { buildList(refresh) }
-    </ListGroup>
-
-}
-
-export const SurveyExpressionEvaluator: React.FC<SurveyEvaluatorProps> = (props) => {
-
-    const [hasEditorErrors, setHasEditorErrors] = useState(false);
-    const [expression, setExpression] = useState<Expression|undefined>(undefined);
-    const [inputExp, setInputExpression] = useState<Expression>({name:"getContext"});
-    const [result, setResult] = useState<any>(undefined);
-    
-    const evaluateExpression = () => {
-       if(props.engineState.engine) {
-         setResult(props.engineState.engine.resolveExpression(expression));
-       }
-    };
-
-    const handleExpSelected = (exp: Expression) => {
-        setInputExpression(exp);
-    }
-
     return <React.Fragment>
-            <ExpressionList engineState={props.engineState} onSelect={handleExpSelected} update={props.update}/>
-            <Editor   
-                    height="150px"
-                    defaultLanguage="json"
-                    value={JSON.stringify(inputExp)}
-                    className={clsx(
-                        { 'border border-danger': hasEditorErrors }
-                    )}
-                    onValidate={(markers) => {
-                        if (markers.length > 0) {
-                            setHasEditorErrors(true)
-                        } else {
-                            setHasEditorErrors(false)
-                        }
-                    }}
-                    onChange={(value) => {
-                        if (!value) { return }
-                        let config: Expression;
-                        try {
-                            config = JSON.parse(value);
-                        } catch (e: any) {
-                            console.error(e);
-                            return
-                        }
-                        if (!config) { return }
-                        setExpression(config);
-                    }}
-                />
-                <Button onClick={evaluateExpression} disabled={hasEditorErrors}>Evaluate</Button>
-                <div>
-                Result
-                <Editor
-                    height="150px"
-                    options={{readOnly: true}}
-                    defaultLanguage="json"
-                    value={result ? JSON.stringify(result) : ''}
-                />
-                </div>
-    </React.Fragment>;
+        <div>
+            <input type="text" placeholder='item key search' onKeyDown={(e)=>{ if(e.key === "Enter") setSearch(e.currentTarget.value) }}/>
+        </div>
+        <ListGroup>
+            { buildList(refresh) }
+        </ListGroup>
+    </React.Fragment>
 }

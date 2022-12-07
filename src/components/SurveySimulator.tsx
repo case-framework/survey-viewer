@@ -1,11 +1,10 @@
-import { AlertBox, SurveyView, Dialog, DialogBtn, Checkbox } from 'case-web-ui';
-import React, { useEffect, useState } from 'react';
-import { Button, Dropdown, DropdownButton } from 'react-bootstrap';
+import { AlertBox, SurveyView, Dialog, DialogBtn } from 'case-web-ui';
+import React, {  useState } from 'react';
+import { Button } from 'react-bootstrap';
 import { Survey, SurveyContext, SurveySingleItemResponse } from 'survey-engine/data_types';
-
 import { nl, nlBE, fr, de, it, da, es, pt } from 'date-fns/locale';
 import { SurveyEngineCore } from 'survey-engine/engine';
-import { EngineState, SurveyExpressionEvaluator } from './SurveyExpressionEvaluator';
+import { EngineState, SurveyInspector } from './SurveyInspector';
 import { CustomSurveyResponseComponent } from 'case-web-ui/build/components/survey/SurveySingleItemView/ResponseComponent/ResponseComponent';
 import clsx from 'clsx';
 
@@ -63,8 +62,9 @@ const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
     const onResponseChanged=(responses: SurveySingleItemResponse[], version: string, engine: SurveyEngineCore) => {
         console.log(responses, engineState.engine, engine);
         engineState.setEngine(engine);
-        setEvaluatorCounter(evaluatorCounter + 1);
+        engineState.setResponses(responses);
         engineState.update();
+        setEvaluatorCounter(evaluatorCounter + 1);
     }
     
     const toggleEvaluator = () => {
@@ -121,7 +121,7 @@ const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
                                             props.onExit();
                                         }}} variant="warning" className="me-1"> Exit</Button>
                         
-                        <Button onClick={toggleEvaluator}>SHow Expression evaluator</Button>
+                        <Button onClick={toggleEvaluator}>Show inspector</Button>
                         <label className='d-inline mx-1'><input type="checkbox" checked={showKeys} onClick={()=>setShowKeys(!showKeys)}/> Show keys</label>
                     </div>
             </div>
@@ -155,8 +155,7 @@ const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
                         }
                     </div>
                     <div className={ clsx( showEvaluator ? "col-5" : "d-none" ) }>
-                        Evaluation
-                        { evaluatorCounter ? <SurveyExpressionEvaluator engineState={engineState} update={evaluatorCounter} /> : '' }
+                        { evaluatorCounter ? <SurveyInspector engineState={engineState} update={evaluatorCounter} /> : '' }
                     </div>
                 </div>
             </div>
