@@ -1,9 +1,9 @@
 import { Survey } from 'survey-engine/data_types';
-import { Badge, ListGroup } from 'react-bootstrap';
+import { Badge, ListGroup, Accordion } from 'react-bootstrap';
 import useLoadJSON from '../hooks/useLoadJSON';
 import { useEffect, useState } from 'react';
 import Card from './Card';
-import { format, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
 
 interface localisedString {
     [key:string]: string;
@@ -80,10 +80,21 @@ const SurveyList: React.FC<SurveyListProps> = (props) => {
 
     const [lang, setLang] = useState(new Set<string>(languages));
 
+    const surveyByStudy : Map<string, SurveyDescription[]> = new Map();
+
     props.surveys.forEach(s => {
         const codes = Object.keys(s.description);
         codes.forEach(k => languages.add(k));
+
+        const study = s.study;
+        if (!surveyByStudy.has(study)) {
+            surveyByStudy.set(study, []);
+        }
+        const list = surveyByStudy.get(study);
+        list?.push(s);
     });
+
+    console.log(surveyByStudy);
 
     const changeLanguage = (newLang: Set<string>)=> {
         setLang(newLang);
@@ -113,12 +124,22 @@ const SurveyList: React.FC<SurveyListProps> = (props) => {
         )
     }
 
+    const surveyList = (study: string, surveys: SurveyDescription[])=> {
+        return <Accordion.Item title={study} eventKey={study} key={study}>
+            <Accordion.Header><b>{study}</b></Accordion.Header>
+            <Accordion.Body>
+            <ListGroup className="py-1a">    
+            { surveys.map( (survey)=> { return surveySelector(survey)}) }
+            </ListGroup>
+            </Accordion.Body>
+        </Accordion.Item>;
+    }
     return (
         <div>
         <LangSelector languages={languages} onChange={changeLanguage} label={props.texts.languages}/>
-        <ListGroup className="py-1a">
-            { props.surveys.map( (survey)=> { return surveySelector(survey)}) }
-        </ListGroup>
+        <Accordion>
+        {Array.from(surveyByStudy.entries()).map(entry => surveyList(entry[0], entry[1]))} 
+        </Accordion>  
         </div>
     );
 };

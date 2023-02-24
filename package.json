@@ -14,7 +14,7 @@
     "@types/react": "^17.0.40",
     "@types/react-dom": "^17.0.13",
     "bootstrap": "^5.2.2",
-    "case-web-ui": "^1.14.0",
+    "case-web-ui": "^1.14.3",
     "clsx": "^1.2.1",
     "date-fns": "^2.29.3",
     "react": "^17.0.2",

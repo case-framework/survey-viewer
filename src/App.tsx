@@ -1,30 +1,25 @@
 import React, { useState } from 'react';
-import { Survey, SurveyContext, SurveySingleItemResponse } from 'survey-engine/data_types';
+import { Survey } from 'survey-engine/data_types';
 import Navbar from './components/NavbarComp';
-import SimulationSetup, { defaultSimulatorUIConfig, defaultSurveyContext } from './components/SimulationSetup';
 import SurveyLoader from './components/SurveyLoader';
 import SurveyMenu from './components/SurveyMenu';
 import SurveyServiceLoader from './components/SurveyServiceLoader';
-import SurveySimulator, { SimulatorUIConfig } from './components/SurveySimulator';
-
+import { registerCustomComponents } from './localConfig';
 interface AppState {
   selectedLanguage?: string;
   languageCodes?: string[];
   surveyKey?: string;
   survey?: Survey;
-  surveyContext: SurveyContext;
-  prefillsFile?: File;
-  prefillValues?: SurveySingleItemResponse[],
   screen: Screens;
-  simulatorUIConfig: SimulatorUIConfig;
 }
 
-type Screens = 'loader' | 'menu' | 'simulation-setup' | 'simulator';
+const customResponseComponents = registerCustomComponents();
+
+
+type Screens = 'loader' | 'menu';
 
 const initialState: AppState = {
   screen: 'loader',
-  simulatorUIConfig: { ...defaultSimulatorUIConfig },
-  surveyContext: { ...defaultSurveyContext },
 }
 
 const surveyProviderUrl = process.env.REACT_APP_SURVEY_URL ?? "";
@@ -83,104 +78,30 @@ const App: React.FC = () => {
         }}>
           <div className="row flex-grow-1">
             <div className="col-12">
-            <SurveyLoader onSurveyLoaded={onLoadSurvey} />
-              {
+            <SurveyLoader onSurveyLoaded={onLoadSurvey}/>
+            {
                 surveyProviderUrl ? <SurveyServiceLoader onSurveyLoaded={onLoadSurvey} surveyProviderUrl={surveyProviderUrl} /> : null
-              }
+            }
             </div>
           </div>
         </div>
+        
       case 'menu':
         if (!appState.selectedLanguage || !appState.survey) {
           reset();
           return null;
         }
         return <SurveyMenu
-          selectedLangue={appState.selectedLanguage}
+          selectedLanguage={appState.selectedLanguage}
           survey={appState.survey}
-          onOpenSimulator={() => navigateTo('simulation-setup')}
+          customResponseComponents={customResponseComponents}
           onExit={() => {
             reset()
           }}
         />
-      case 'simulation-setup':
-        return <SimulationSetup
-          onStart={() => navigateTo('simulator')}
-          onExit={() => navigateTo('menu')}
-          prefillsFile={appState.prefillsFile}
-          onPrefillChanged={(prefills?: File) => {
-            if (prefills) {
-              const reader = new FileReader()
-
-              reader.onabort = () => console.log('file reading was aborted')
-              reader.onerror = () => console.log('file reading has failed')
-              reader.onload = () => {
-                // Do whatever you want with the file contents
-                const res = reader.result;
-                if (!res || typeof (res) !== 'string') {
-                  console.error('TODO: handle file upload error')
-                  return;
-                }
-                const content = JSON.parse(res);
-                setAppState(prev => {
-                  return {
-                    ...prev,
-                    prefillsFile: prefills,
-                    prefillValues: content,
-
-                  }
-                })
-              }
-              reader.readAsText(prefills)
-            } else {
-              setAppState(prev => {
-                return {
-                  ...prev,
-                  prefillsFile: prefills,
-                  prefillValues: []
-
-                }
-              })
-            }
-
-
-
-          }}
-          currentSurveyContext={appState.surveyContext}
-          onSurveyContextChanged={(config) => setAppState(prev => {
-            return {
-              ...prev,
-              surveyContext: {
-                ...config
-              }
-            }
-          })}
-          currentSimulatorUIConfig={appState.simulatorUIConfig}
-          onSimulatorUIConfigChanged={(config) => setAppState(prev => {
-            return {
-              ...prev,
-              simulatorUIConfig: {
-                showKeys: config.showKeys,
-                texts: { ...config.texts }
-              }
-            }
-          })}
-        />
-      case 'simulator':
-        return <SurveySimulator
-          config={appState.simulatorUIConfig}
-          surveyAndContext={
-            appState.survey ? {
-              survey: appState.survey,
-              context: appState.surveyContext
-            } : undefined
-          }
-          prefills={appState.prefillValues}
-          selectedLanguage={appState.selectedLanguage}
-          onExit={() => navigateTo('simulation-setup')}
-        />
     }
   }
+  
 
   return (
     <div className="d-flex flex-column overflow-scroll" style={{
