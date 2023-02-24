@@ -5,10 +5,12 @@ import { Tabs, Tab, Container } from 'react-bootstrap';
 import { SurveyContext, SurveySingleItemResponse } from 'survey-engine/data_types';
 import SimulationSetup, { defaultSimulatorUIConfig, defaultSurveyContext } from './SimulationSetup';
 import SurveySimulator, { SimulatorUIConfig } from './SurveySimulator';
+import { CustomSurveyResponseComponent } from 'case-web-ui';
 
 interface SurveyMenuProps {
     survey: Survey;
     selectedLanguage: string;
+    customResponseComponents?:CustomSurveyResponseComponent[]
     onExit: () => void;
 }
 
@@ -33,6 +35,7 @@ const SurveyMenu: React.FC<SurveyMenuProps> = (props) => {
                     prefills={prefillValues}
                     selectedLanguage={props.selectedLanguage}
                     onExit={() => props.onExit()}
+                    customResponseComponents={props.customResponseComponents}
                     />
             </Tab>
             <Tab eventKey="simulator-setup" title="Simulator Setup">

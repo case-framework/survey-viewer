@@ -5,7 +5,7 @@ import { Survey, SurveyContext, SurveySingleItemResponse } from 'survey-engine/d
 import { nl, nlBE, fr, de, it, da, es, pt } from 'date-fns/locale';
 import { SurveyEngineCore } from 'survey-engine/engine';
 import { EngineState, SurveyInspector } from './SurveyInspector';
-import { CustomSurveyResponseComponent } from 'case-web-ui/build/components/survey/SurveySingleItemView/ResponseComponent/ResponseComponent';
+import { CustomSurveyResponseComponent } from 'case-web-ui';
 import clsx from 'clsx';
 
 const dateLocales = [
