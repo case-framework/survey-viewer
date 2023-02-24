@@ -160,7 +160,7 @@ const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
                         }
                     </div>
                     <div className={ clsx( showEvaluator ? "col-5" : "d-none" ) }>
-                        { evaluatorCounter ? <SurveyInspector engineState={engineState} update={evaluatorCounter} /> : '' }
+                        { evaluatorCounter ? <SurveyInspector engineState={engineState} update={evaluatorCounter} /> : <p>Select at least a response to show the inspector</p> }
                     </div>
                 </div>
             </div>
