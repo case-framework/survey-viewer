@@ -59,13 +59,18 @@ const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
 
     const [showKeys, setShowKeys ] = useState<boolean>(props.config.showKeys);
 
-    const onResponseChanged=(responses: SurveySingleItemResponse[], version: string, engine: SurveyEngineCore) => {
+    const onResponseChanged=(responses: SurveySingleItemResponse[], version: string, engine?: SurveyEngineCore) => {
         console.log(responses, engineState.engine, engine);
-        engineState.setEngine(engine);
-        engineState.setResponses(responses);
-        engineState.update();
-        setEvaluatorCounter(evaluatorCounter + 1);
+        if(engine) {
+            engineState.setEngine(engine);
+            engineState.setResponses(responses);
+            engineState.update();
+            setEvaluatorCounter(evaluatorCounter + 1);
+        } else {
+            console.warn("Engine instance is not passed to callback, not able to use evaluator");
+        }
     }
+       
     
     const toggleEvaluator = () => {
         setShowEvaluator(!showEvaluator)
