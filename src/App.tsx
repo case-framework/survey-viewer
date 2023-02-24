@@ -4,6 +4,7 @@ import Navbar from './components/NavbarComp';
 import SurveyLoader from './components/SurveyLoader';
 import SurveyMenu from './components/SurveyMenu';
 import SurveyServiceLoader from './components/SurveyServiceLoader';
+import { registerCustomComponents } from './localConfig';
 interface AppState {
   selectedLanguage?: string;
   languageCodes?: string[];
@@ -11,6 +12,9 @@ interface AppState {
   survey?: Survey;
   screen: Screens;
 }
+
+const customResponseComponents = registerCustomComponents();
+
 
 type Screens = 'loader' | 'menu';
 
@@ -88,8 +92,9 @@ const App: React.FC = () => {
           return null;
         }
         return <SurveyMenu
-        selectedLanguage={appState.selectedLanguage}
+          selectedLanguage={appState.selectedLanguage}
           survey={appState.survey}
+          customResponseComponents={customResponseComponents}
           onExit={() => {
             reset()
           }}
