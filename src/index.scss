@@ -1,12 +1,19 @@
 @import "~case-web-ui/build/scss/theme-default.scss";
 
+.nav-tabs {
+    background-color: map-get($theme-colors, "lightest");
+}
+
 .nav-tabs .nav-item {
-    background-color: map-get($theme-colors, "secondary");
-
-
+    background-color: map-get($theme-colors, "lightest");
+    
     .nav-link {
-        color: map-get($theme-colors ,'grey' );
+        color: map-get($theme-colors ,'grey-5' );
         text-decoration: none;
+    }
+
+    .nav-link:hover {
+        color: map-get($theme-colors ,'grey-2' );
     }
 }
 

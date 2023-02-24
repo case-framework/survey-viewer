@@ -30,7 +30,7 @@ export const SurveyInspector: React.FC<SurveyInspectorProps> = (props) => {
         setInputExpression(exp);
     }
 
-    return <Tabs defaultActiveKey="list" id="expression-evaluator" className="mb-1 bg-secondary">
+    return <Tabs defaultActiveKey="list" id="expression-evaluator" className="mb-1">
             <Tab eventKey="response" title="Responses">
                 <ResponsesList responses={props.engineState.responses}/>
             </Tab>

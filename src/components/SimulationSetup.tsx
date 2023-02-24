@@ -1,5 +1,5 @@
 import Editor from '@monaco-editor/react';
-import { Checkbox, FileDropzone } from 'case-web-ui';
+import { FileDropzone } from 'case-web-ui';
 import clsx from 'clsx';
 import React, { useState } from 'react';
 import { SurveyContext } from 'survey-engine/data_types';
@@ -15,8 +15,6 @@ interface SimulationSetupProps {
     onSimulatorUIConfigChanged: (config: SimulatorUIConfig) => void;
     onSurveyContextChanged: (context: SurveyContext) => void;
     onPrefillChanged: (prefills?: File) => void;
-    onStart: () => void;
-    onExit: () => void;
 }
 
 export const defaultSimulatorUIConfig: SimulatorUIConfig = {
@@ -41,19 +39,6 @@ const SimulationSetup: React.FC<SimulationSetupProps> = (props) => {
 
     const [hasUILabelEditorErrors, setHasUILabelEditorErrors] = useState(false);
     const [openSurveyUIConfigUploadDialog, setOpenSurveyUIConfigUploadDialog] = useState(false);
-
-    const navButtons = (
-        <div>
-            <button
-                className="btn btn-secondary"
-                onClick={() => props.onExit()}
-            >Back to Menu</button>
-            <button
-                className="btn btn-primary ms-2"
-                onClick={() => props.onStart()}
-            >Start</button>
-        </div>
-    )
 
     const surveyUIConfigUploader = <UploadDialog
         open={openSurveyUIConfigUploadDialog}
@@ -109,12 +94,8 @@ const SimulationSetup: React.FC<SimulationSetupProps> = (props) => {
         onClose={() => setOpenSurveyContextUploadDialog(false)}
     />
 
-
-
     return (
         <div className="container my-3">
-            {navButtons}
-
             <Card title="Participant"
                 className="my-2"
             >
@@ -201,22 +182,7 @@ const SimulationSetup: React.FC<SimulationSetupProps> = (props) => {
 
             </Card>
 
-            <Card
-                className="my-2"
-                title="UI Customizations">
-                <Checkbox
-                    id="show-keys-checkbox"
-                    name="show-keys-checkbox"
-                    className="mb-3"
-                    checked={props.currentSimulatorUIConfig.showKeys}
-                    onChange={(value) => {
-                        props.onSimulatorUIConfigChanged({
-                            ...props.currentSimulatorUIConfig,
-                            showKeys: value
-                        })
-                    }}
-                    label="Show keys"
-                />
+            <Card className="my-2" title="UI Customizations">
                 <h6 className="fw-bold">Survey UI Labels:</h6>
                 <Editor
                     height="150px"
@@ -279,7 +245,6 @@ const SimulationSetup: React.FC<SimulationSetupProps> = (props) => {
                 </div>
 
             </Card>
-            {navButtons}
             {surveyContextUploader}
             {surveyUIConfigUploader}
         </div>

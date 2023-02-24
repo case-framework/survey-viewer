@@ -169,5 +169,4 @@ const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
     );
 };
 
-
 export default SurveySimulator;
