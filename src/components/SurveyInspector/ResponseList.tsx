@@ -39,7 +39,7 @@ export const ResponsesList: React.FC<ResponsesListProps> = (props) => {
     const responses = props.responses ? selectResponses(props.responses) : [];
 
     return <React.Fragment>
-        <div>
+        <div className='mb-1'>
             <label className='me-1' title="Show as json"><input type="checkbox" checked={json} onClick={() => setJSON(!json) }/> {"{}"}</label>
             <input type="text" placeholder="item key search" onKeyDown={(e)=>{ if(e.key === "Enter") setSearch(e.currentTarget.value) }}/>
         </div>

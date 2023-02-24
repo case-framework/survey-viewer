@@ -181,7 +181,7 @@ export const ExpressionList: React.FC<ExpressionListProps> = (props) => {
     const ExpItem = (itemKey: string, ref: ExpressionRef, index: number) => {
         return <ListGroup.Item key={itemKey + '=' + index} className={clsx({'bg-warning': ref.changed})}>
             <span>
-                <small>{itemKey}{ref.key ? ' [' + ref.key + ']' : ''}</small> 
+                <small className='me-1'>{itemKey}{ref.key ? ' [' + ref.key + ']' : ''}</small> 
                 <b>{ref.field}</b> 
             </span>
             <p><code>{ toFunc(ref.exp) }</code></p>
@@ -203,7 +203,7 @@ export const ExpressionList: React.FC<ExpressionListProps> = (props) => {
     }
 
     return <React.Fragment>
-        <div>
+        <div className='my-1'>
             <input type="text" placeholder='item key search' onKeyDown={(e)=>{ if(e.key === "Enter") setSearch(e.currentTarget.value) }}/>
         </div>
         <ListGroup>
