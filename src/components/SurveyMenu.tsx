@@ -24,7 +24,7 @@ const SurveyMenu: React.FC<SurveyMenuProps> = (props) => {
     const surveyDefinition = props.survey.surveyDefinition;
 
     return <Container className='mt-1 mx-1' fluid={true}>
-        <Tabs defaultActiveKey="info" id="survey-menu" className="mb-1">
+        <Tabs defaultActiveKey="simulator" id="survey-menu" className="mb-1">
             <Tab eventKey="simulator" title="Simulator">
                 <SurveySimulator
                     config={simulatorUIConfig}
