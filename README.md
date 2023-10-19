@@ -1,46 +1,96 @@
-# Getting Started with Create React App
+# Survey Viewer App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Survey Viewer is an online application to view/run a Survey from a json Survey Definition used by [Influenzanet Survey Engine](https://github.com/influenzanet/survey-engine.ts)
 
-## Available Scripts
+## Installing
 
-In the project directory, you can run:
+This application is built as a Single Page Application with React Framework.
 
-### `yarn start`
+To install the application, clone this repo and run yarn to install the dependencies
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+```bash
+yarn 
+````
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+To run in in dev environment
+```bash
+yarn start
+```
 
-### `yarn test`
+To build the app as a standalone website:
+```bash 
+yarn build
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+The deployable website will be in 'build' directory
 
-### `yarn build`
+## Survey Definition Source
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+2 ways are proposed to view a survey :
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- Upload a JSON file containing the Survey Definition
+- Use a Survey Provider Service : a list of available survey will be loaded from the service and downloaded directly from the service
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+An implementation for survey provider service is available in [Grippenet repository](https://github.com/grippenet/survey-provider-service). It serves survey list from files in a directory.
 
-### `yarn eject`
+To use the service provider, the application must be compiled with some environment variables
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- REACT_APP_SURVEY_URL: URL of the survey service
+- REACT_APP_CSP_CONNECT_URLS: the URL also must be added to this variable to enable the app to connect to the survey service
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Example
+```bash
+REACT_APP_SURVEY_URL=https://your.survey.service
+# You may add  
+REACT_APP_CSP_CONNECT_URLS=$REACT_APP_SURVEY_URL ...
+```     
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+# Customize
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+Warning: These customizations are useable only after the application is built. So you need to use either dev server (`yarn start`) or to rebuild the static website (`yarn build`)
 
-## Learn More
+## Add a custom Response Component
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+To register a customComponent, you have to modify the script 'localConfig.ts' and make the function registerCustomComponents return the list of your component
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```ts
+export const registerCustomComponents = () : CustomSurveyResponseComponent[] | undefined => {
+    return [
+        {
+            name: 'awesomeComponent', // Name of your component as it will be used in `role` field of the survey definition
+            component: MyAwesomeComponent
+        }
+    ];
+} 
+```
+
+## Add Flags
+
+You can tell to the survey viewer which flags are handled by your platform (and for each what are the expected values). The Survey Context editor will propose the known list and enable more friendly editor than json editor.
+
+You had to customize the 
+
+```ts
+export const registerParticipantFlags = () : ParticipantFlags => {
+    return {
+        'myflagkey': {
+            label: 'The label to tell the user what is the purpose of this flag'
+            values: [
+                {
+                    value: '1' // The value the flag can have
+                    label: 'A friendly label to explain what is this value'
+                }
+            ]
+        },
+        // A real example (the 'prev' flag used in Influenzanet platform)
+        'prev': {
+            label:"Has ongoing symptoms",
+            values: [
+                {value:"0", label:"Does not have ongoing symptoms"}
+                {value: "1", label:"Has ongoing symptoms"}
+            ],
+        },
+    };
+}
+
+```

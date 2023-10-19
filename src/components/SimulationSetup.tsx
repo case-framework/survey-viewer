@@ -7,10 +7,13 @@ import Card from './Card';
 import { acceptJSON } from './constants';
 import { SimulatorUIConfig, SurveyUILabels } from './SurveySimulator';
 import UploadDialog from './UploadDialog';
+import { ParticipantFlag, ParticipantFlags } from '../types/flags';
+import { Badge, Button, Collapse, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 interface SimulationSetupProps {
     currentSimulatorUIConfig: SimulatorUIConfig;
     currentSurveyContext: SurveyContext;
+    participantFlags: ParticipantFlags
     prefillsFile?: File;
     onSimulatorUIConfigChanged: (config: SimulatorUIConfig) => void;
     onSurveyContextChanged: (context: SurveyContext) => void;
@@ -123,6 +126,9 @@ const SimulationSetup: React.FC<SimulationSetupProps> = (props) => {
                 </button>
 
                 <h6 className="fw-bold mt-3">Survey context:</h6>
+                <p className='ps-4'>Participant Flags</p>
+                <FlagsEditor availableFlags={props.participantFlags} surveyContext={props.currentSurveyContext} onChange={props.onSurveyContextChanged}/>
+                <p>Edit the JSON directly:</p>
                 <Editor
                     height="150px"
                     defaultLanguage="json"
@@ -251,4 +257,104 @@ const SimulationSetup: React.FC<SimulationSetupProps> = (props) => {
     );
 };
 
+
+interface HelpTooltipProps {
+    label: string;
+}
+
+export const HelpTooltip : React.FC<HelpTooltipProps> = (props) => {
+return <OverlayTrigger overlay={<Tooltip>{props.label}</Tooltip>}><Badge className='mx-1' pill={true}>?</Badge></OverlayTrigger>
+}
+
+interface FlagsEditorProps {
+    availableFlags: ParticipantFlags
+    surveyContext: SurveyContext
+    onChange: (ctx: SurveyContext)=>void;
+}
+
+export const FlagsEditor : React.FC<FlagsEditorProps> = (props) => {
+    
+    const [newFlag, setNewFlag] = useState<string>('');
+    
+    
+    const knownFlags = new Map(Object.entries(props.availableFlags));
+    const curCtx = props.surveyContext.participantFlags ?? {};
+    
+    const flagUpdated = (name: string, value: string) => {
+        if(name === '') {
+            return;
+        }
+        const ctx = { ...props.surveyContext};
+        ctx.participantFlags[name] = value;
+        props.onChange(ctx);
+    }
+
+    const removeFlag = (name:string) => {
+        if(name === '') {
+            return;
+        }
+        const ctx = { ...props.surveyContext};
+        delete ctx.participantFlags[name];
+        props.onChange(ctx);
+    }
+
+   const addCustomFlag = ()=> {
+        flagUpdated(newFlag, '');
+   }
+
+    const FlagLabel = (key: string, def?: ParticipantFlag)=> {
+        return <strong>
+        {key}
+        {def ? <HelpTooltip label={def.label}/> : ''}
+        </strong>
+    }
+
+    const showFlag = (key:string) => {
+        
+        const def = knownFlags.get(key);
+
+        const value = props.surveyContext.participantFlags[key] ?? '';
+        return <div key={key} className='my-1 row'>
+            <div className='col-3 text-end'>{ FlagLabel(key, def) }</div>  
+            <div className='col-2'>
+            <input value={value} onChange={ev => flagUpdated(key, ev.target.value)} className='form-control'/>
+            </div>
+            <div className='col'>
+                {def ? 
+                    (<span className='ms-1'>
+                        Acceptable values :
+                        <select className='mx-1' onChange={ev => flagUpdated(key, ev.target.value)}>
+                        <option value="" selected={value === ""}>-Empty-</option>
+                        {def.values.map(v=> <option value={v.value} key={v.value} selected={v.value === value}>{v.label} ({v.value})</option>)}
+                        </select>
+                    </span>) 
+                : ''}
+            <Button onClick={()=>removeFlag(key)} variant='danger' size='sm' className='ms-1'>Remove</Button>
+            </div>
+        </div>
+       
+    }
+
+    const usedKeys = Array.from(Object.keys(curCtx));
+    // List of missing flags in context, to be added
+    const missing = Array.from(knownFlags.keys()).filter(k=>!usedKeys.includes(k));
+   
+    return <div className='my-1 p-1 ps-4'>
+            { usedKeys.map(showFlag) }
+            {missing.length > 0 ? (
+                    <div className='my-1'>
+                    <span>Add a known flag <HelpTooltip label="Flag known by the platform"/> :</span>
+                    <select onChange={(ev)=> { flagUpdated(ev.target.value, '')}}>
+                    <option value="">-- Select a new flag to add --</option>
+                    {missing.map(n=> <option key={n} value={n}>{n} - {knownFlags.get(n)?.label}</option>)}
+                    </select>
+                    </div>
+                ) : ''}
+            Add custom flag 
+            <input type="text" style={{"width":"20em"}} className="ms-1" onChange={(ev)=>setNewFlag(ev.target.value)}/> 
+            <Button variant='info' size='sm' className="ms-1" onClick={addCustomFlag}>Add</Button>
+        </div>
+}
+
 export default SimulationSetup;
+

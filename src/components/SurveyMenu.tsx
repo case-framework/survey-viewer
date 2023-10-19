@@ -6,11 +6,13 @@ import { SurveyContext, SurveySingleItemResponse } from 'survey-engine/data_type
 import SimulationSetup, { defaultSimulatorUIConfig, defaultSurveyContext } from './SimulationSetup';
 import SurveySimulator, { SimulatorUIConfig } from './SurveySimulator';
 import { CustomSurveyResponseComponent } from 'case-web-ui';
+import { ParticipantFlag, ParticipantFlags } from '../types/flags';
 
 interface SurveyMenuProps {
     survey: Survey;
     selectedLanguage: string;
     customResponseComponents?:CustomSurveyResponseComponent[]
+    participantFlags: ParticipantFlags
     onExit: () => void;
 }
 
@@ -40,6 +42,7 @@ const SurveyMenu: React.FC<SurveyMenuProps> = (props) => {
             </Tab>
             <Tab eventKey="simulator-setup" title="Simulator Setup">
                 <SimulationSetup
+                    participantFlags={props.participantFlags}
                     prefillsFile={prefillsFile}
                     onPrefillChanged={(file?: File) => {
                         if (file) {
