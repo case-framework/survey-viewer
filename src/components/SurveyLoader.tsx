@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { DialogBtn, FileDropzone } from 'case-web-ui';
 import { Survey } from 'survey-engine/data_types';
-import Card from './Card';
+import CardTitled from './Card';
 import { acceptJSON } from './constants';
 
 interface SurveyLoaderProps {
@@ -38,7 +38,7 @@ const SurveyLoader: React.FC<SurveyLoaderProps> = (props) => {
     }
 
     return (
-        <Card title={texts.title}>
+        <CardTitled title={texts.title}>
             <FileDropzone
                 placeholderText="Drag and drop a file here or click this box"
                 accept={acceptJSON}
@@ -70,7 +70,7 @@ const SurveyLoader: React.FC<SurveyLoaderProps> = (props) => {
                 >{texts.btn.useUrl}
                 </button>
             </div>
-        </Card>
+        </CardTitled>
     );
 };
 

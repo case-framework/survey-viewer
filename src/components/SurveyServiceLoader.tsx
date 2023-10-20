@@ -2,7 +2,7 @@ import { Survey } from 'survey-engine/data_types';
 import { Badge, ListGroup, Accordion } from 'react-bootstrap';
 import useLoadJSON from '../hooks/useLoadJSON';
 import { useEffect, useState } from 'react';
-import Card from './Card';
+import CardTitled from './Card';
 import { parseISO } from 'date-fns';
 
 interface localisedString {
@@ -177,9 +177,9 @@ const SurveyServiceLoader: React.FC<SurveyLoaderProps> = (props) => {
     }
    
     return (
-        <Card title={texts.title} className="my-1">
+        <CardTitled title={texts.title} className="my-1">
             <SurveyList onSelectItem={loadSurveyJSON} surveys={content} texts={texts}></SurveyList> 
-        </Card>
+        </CardTitled>
     );
 };
 

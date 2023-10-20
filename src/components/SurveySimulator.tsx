@@ -1,12 +1,14 @@
 import { AlertBox, SurveyView, Dialog, DialogBtn } from 'case-web-ui';
 import React, {  useState } from 'react';
-import { Button } from 'react-bootstrap';
+import { Button, Card, CardBody } from 'react-bootstrap';
 import { Survey, SurveyContext, SurveySingleItemResponse } from 'survey-engine/data_types';
 import { nl, nlBE, fr, de, it, da, es, pt } from 'date-fns/locale';
 import { SurveyEngineCore } from 'survey-engine/engine';
 import { EngineState, SurveyInspector } from './SurveyInspector';
 import { CustomSurveyResponseComponent } from 'case-web-ui';
 import clsx from 'clsx';
+import { SurveyAndContext } from '../types';
+import SurveyInfo from './SurveyInfo';
 
 const dateLocales = [
     { code: 'nl', locale: nl, format: 'dd-MM-yyyy' },
@@ -35,14 +37,13 @@ export interface SimulatorUIConfig {
 
 interface SurveySimulatorProps {
     config: SimulatorUIConfig;
-    surveyAndContext?: {
-        survey: Survey;
-        context: SurveyContext;
-    };
+    surveyAndContext?: SurveyAndContext;
     prefills?: SurveySingleItemResponse[];
     selectedLanguage?: string;
     customResponseComponents?:CustomSurveyResponseComponent[]
     onExit: () => void;
+    onSaveAsPrefill: (p: SurveySingleItemResponse[])=>void;
+    onReset: () => void;
 }
 
 
@@ -71,13 +72,13 @@ const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
         }
     }
        
-    
     const toggleEvaluator = () => {
         setShowEvaluator(!showEvaluator)
     }
 
     const surveySubmitDialog = <Dialog
         title="Survey Finished"
+        size='lg'
         onClose={() => {
             setSurveyResponseData([]);
             setOpenSurveyEndDialog(false);
@@ -99,6 +100,18 @@ const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
                 outlined={true}
             />
             <DialogBtn
+                className="me-2"
+                onClick={() => {
+                    const response = surveyResponseData;
+                    setSurveyResponseData([]);
+                    props.onSaveAsPrefill(response);
+                    props.onReset();
+                    setOpenSurveyEndDialog(false);
+                }}
+                label="Store as prefill for next survey"
+                outlined={true}
+            />
+            <DialogBtn
                 onClick={() => {
 
                     const exportData = surveyResponseData;
@@ -112,11 +125,15 @@ const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
                     setOpenSurveyEndDialog(false)
                     props.onExit()
                 }}
-                label="Save and Exit"
+                label="Save as file and Exit"
             />
         </div>
 
     </Dialog>
+
+    console.log('prefills', props.prefills);
+
+    const languageCode = props.selectedLanguage ? props.selectedLanguage : 'en';
 
     return (
         <div className="container-fluid">
@@ -126,21 +143,24 @@ const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
                                             props.onExit();
                                         }}} variant="warning" className="me-1"> Exit</Button>
                         
-                        <Button onClick={toggleEvaluator}>Show inspector</Button>
+                        <Button className="me-1"  onClick={toggleEvaluator}>Show inspector</Button>
+                        <Button className="me-1"  onClick={()=>props.onReset()}>Reset survey</Button>
                         <label className='d-inline mx-1'><input type="checkbox" checked={showKeys} onClick={()=>setShowKeys(!showKeys)}/> Show keys</label>
                     </div>
             </div>
             <div className={ clsx(showEvaluator ? "container-fluid" : 'container', " pt-3") }>
                 <div className="row">
                     <div className={ clsx( showEvaluator ? "col-7" : "col-10") }>
-                        {props.surveyAndContext ?
+                        {props.surveyAndContext ? (
+                            <div>
+                            <SurveyInfo survey={props.surveyAndContext.survey} languageCode={languageCode}/>
                             <SurveyView
                                 loading={false}
                                 showKeys={showKeys}
                                 survey={props.surveyAndContext.survey}
                                 context={props.surveyAndContext.context}
                                 prefills={props.prefills}
-                                languageCode={props.selectedLanguage ? props.selectedLanguage : 'en'}
+                                languageCode={languageCode}
                                 onSubmit={(responses,) => {
                                     setSurveyResponseData(responses.slice())
                                     setOpenSurveyEndDialog(true);
@@ -152,7 +172,8 @@ const SurveySimulator: React.FC<SurveySimulatorProps> = (props) => {
                                 invalidResponseText={props.config.texts.invalidResponseText}
                                 dateLocales={dateLocales}
                                 customResponseComponents={props.customResponseComponents}
-                            /> :
+                            />
+                            </div>) :
                             <AlertBox type="danger"
                                 useIcon={true}
                                 content={props.config.texts.noSurveyLoaded}
